@@ -550,7 +550,7 @@ export default function AvaliacaoFisicaProfissional() {
                                             <label className="flex items-center gap-2 cursor-pointer"><input type="radio" name="prog_caurn" className="w-4 h-4 accent-teal-600" /> <span className="text-sm font-bold">Não</span></label>
                                         </div>
                                     </div>
-                                    <InputField placeholder="Se sim, quais? (Ex: CaurnAtiva, Terapia De Bem)" className="w-full" />
+                                    <InputField label="Programas Atuais" placeholder="Se sim, quais? (Ex: CaurnAtiva, Terapia De Bem)" className="w-full" />
                                 </div>
                             </div>
 
