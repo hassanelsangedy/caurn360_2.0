@@ -148,9 +148,59 @@ export default function PatientDashboard() {
                     </div>
                 </div>
 
+                {/* Meus Programas Section (Simulated) */}
+                <h3 className="font-bold text-slate-800 px-2 text-sm uppercase tracking-wider">Meus Programas</h3>
+                <div className="space-y-4">
+                    {/* Programa 1: Inscrito */}
+                    <div className="bg-white rounded-[32px] p-6 shadow-sm border border-slate-100 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full -mr-12 -mt-12" />
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center">
+                                    <Utensils className="w-5 h-5" />
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-slate-800 text-sm">Nutrição Ativa</h4>
+                                    <span className="bg-emerald-100 text-emerald-700 text-[9px] font-black uppercase px-2 py-0.5 rounded-full">Inscrito (Ativo)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex gap-2">
+                            <Link href="/programas/nutricao-ativa" className="flex-1 bg-slate-900 text-white text-center py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all">
+                                Acessar Mural
+                            </Link>
+                            <Link href="/programas/nutricao-ativa" className="flex-1 bg-white border border-slate-200 text-slate-600 text-center py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all">
+                                Calendário
+                            </Link>
+                        </div>
+                    </div>
+
+                    {/* Programa 2: Pendente */}
+                    <div className="bg-white rounded-[32px] p-6 shadow-sm border border-slate-100 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/5 rounded-full -mr-12 -mt-12" />
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center">
+                                    <Dumbbell className="w-5 h-5" />
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-slate-800 text-sm">Pilates (Templo da Força)</h4>
+                                    <span className="bg-orange-100 text-orange-700 text-[9px] font-black uppercase px-2 py-0.5 rounded-full">Interesse Confirmado</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="bg-orange-50 border border-orange-100 p-3 rounded-xl">
+                            <p className="text-[10px] text-orange-800 font-bold leading-tight">
+                                <Clock className="w-3 h-3 inline mr-1" />
+                                Aguardando análise do profissional técnico.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
                 {/* Quick Actions (Hub) */}
                 <h3 className="font-bold text-slate-800 px-2 text-sm uppercase tracking-wider">Acesso Rápido</h3>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4 pb-12">
                     <Link href="/avaliacao" className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center justify-center gap-2 hover:border-blue-300 transition-colors">
                         <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center">
                             <ClipboardList className="w-6 h-6" />
@@ -168,3 +218,5 @@ export default function PatientDashboard() {
         </AppShell>
     );
 }
+
+import { Utensils, Dumbbell, Clock } from "lucide-react";

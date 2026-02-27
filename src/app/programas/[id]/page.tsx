@@ -159,6 +159,9 @@ const PROGRAMS_DATA: Record<string, ProgramData> = {
 import { ConsentModal } from "@/components/activity/ConsentModal";
 import { ActivityInteraction } from "@/components/activity/ActivityInteraction";
 
+import { registrarInteressePrograma } from "@/app/actions/programas";
+import { toast } from "sonner";
+
 export default function ProgramaDetailPage() {
     const params = useParams();
     const id = params.id as string;
@@ -174,12 +177,26 @@ export default function ProgramaDetailPage() {
         enrolledCount: 0
     };
 
-    const [isEnrolled, setIsEnrolled] = useState(false);
+    // States: 'info' -> 'details' -> 'consent' -> 'confirmation' -> 'enrolled'
+    const [step, setStep] = useState<'info' | 'details' | 'consent' | 'confirmation' | 'enrolled'>('info');
     const [showConsent, setShowConsent] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Mock enrollment state - in a real app this would come from the database
+    // For the demo, we'll allow the user to go through the flow
+    const handleConfirmInterest = async () => {
+        setIsSubmitting(true);
+        // Simulating the action call
+        // In reality: await registrarInteressePrograma("user-id", id);
+        setTimeout(() => {
+            setIsSubmitting(false);
+            setStep('enrolled');
+            toast.success("Interesse confirmado! Aguarde a análise do profissional.");
+        }, 1500);
+    };
 
     const handleAcceptConsent = (consent: any) => {
-        setIsEnrolled(true);
-        setShowConsent(false);
+        setStep('confirmation');
     };
 
     return (
@@ -191,19 +208,15 @@ export default function ProgramaDetailPage() {
                     Voltar para Programas
                 </Link>
 
-                {!isEnrolled ? (
+                {step !== 'enrolled' && (
                     <>
                         {/* Hero Card */}
                         <div className="bg-white rounded-[40px] p-8 shadow-xl border border-slate-100 relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500 opacity-5 blur-[100px] -mr-24 -mt-24 rounded-full" />
                             <h1 className="text-2xl font-black text-slate-800 leading-tight mb-4">{programData.name}</h1>
+
                             <div className="flex items-center gap-2 mb-8">
-                                <div className="flex -space-x-2 mr-2">
-                                    {[1, 2, 3].map(i => (
-                                        <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-400">👤</div>
-                                    ))}
-                                </div>
-                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Atividade em grupo</span>
+                                <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest bg-blue-50 px-3 py-1 rounded-full border border-blue-100">Jornada do Autocuidado</span>
                             </div>
 
                             <div className="space-y-6">
@@ -238,76 +251,110 @@ export default function ProgramaDetailPage() {
                                 </div>
                             </div>
 
-                            <button
-                                onClick={() => setShowConsent(true)}
-                                className="w-full mt-10 bg-caurn-red text-white py-5 rounded-[24px] font-black text-sm uppercase tracking-widest shadow-xl shadow-red-500/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2"
-                            >
-                                Quero Participar
-                                <ArrowRight className="w-5 h-5" />
-                            </button>
+                            {step === 'info' && (
+                                <button
+                                    onClick={() => setStep('details')}
+                                    className="w-full mt-10 bg-blue-600 text-white py-5 rounded-[24px] font-black text-sm uppercase tracking-widest shadow-xl shadow-blue-500/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2"
+                                >
+                                    Saber Mais
+                                    <Info className="w-5 h-5" />
+                                </button>
+                            )}
+
+                            {step === 'details' && (
+                                <button
+                                    onClick={() => setStep('consent')}
+                                    className="w-full mt-10 bg-emerald-600 text-white py-5 rounded-[24px] font-black text-sm uppercase tracking-widest shadow-xl shadow-emerald-500/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2"
+                                >
+                                    Quero Participar
+                                    <ArrowRight className="w-5 h-5" />
+                                </button>
+                            )}
+
+                            {step === 'confirmation' && (
+                                <button
+                                    disabled={isSubmitting}
+                                    onClick={handleConfirmInterest}
+                                    className="w-full mt-10 bg-caurn-red text-white py-5 rounded-[24px] font-black text-sm uppercase tracking-widest shadow-xl shadow-red-500/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                                >
+                                    {isSubmitting ? "Enviando..." : "Confirmar interesse em participar"}
+                                    <Send className="w-5 h-5" />
+                                </button>
+                            )}
                         </div>
 
-                        {/* About Section */}
-                        <div className="bg-slate-50 rounded-[32px] p-6 border border-slate-200">
-                            <h3 className="text-xs font-black text-slate-800 uppercase tracking-widest mb-3 flex items-center gap-2">
-                                <Info className="w-4 h-4 text-blue-600" />
-                                O que é a atividade?
-                            </h3>
-                            <div className="text-sm text-slate-600 font-medium leading-relaxed whitespace-pre-wrap">
-                                {programData.description.split('\n').map((line, i) => (
-                                    <p key={i} className={line.startsWith('-') || line.startsWith('*') ? 'ml-4' : 'mb-2'}>
-                                        {line}
-                                    </p>
-                                ))}
+                        {/* Description Section (Visible during 'details' step or after) */}
+                        {step !== 'info' && (
+                            <div className="bg-slate-50 rounded-[32px] p-6 border border-slate-200 animate-in fade-in slide-in-from-top-4">
+                                <h3 className="text-xs font-black text-slate-800 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                    <Info className="w-4 h-4 text-blue-600" />
+                                    Benefícios para sua Saúde
+                                </h3>
+                                <div className="text-sm text-slate-600 font-medium leading-relaxed whitespace-pre-wrap">
+                                    {programData.description.split('\n').map((line, i) => (
+                                        <p key={i} className={line.startsWith('-') || line.startsWith('*') ? 'ml-4' : 'mb-2'}>
+                                            {line}
+                                        </p>
+                                    ))}
+                                    <div className="mt-4 p-4 bg-blue-100/50 rounded-2xl border border-blue-200/50">
+                                        <p className="text-xs font-bold text-blue-800 flex items-center gap-2">
+                                            <Activity className="w-4 h-4" /> Evolução Monitorada
+                                        </p>
+                                        <p className="text-[10px] text-blue-700 mt-1">
+                                            {id === 'pilates'
+                                                ? "A prática contínua de Pilates ajuda a melhorar significativamente a flexibilidade medida no seu Raio-X original."
+                                                : "Este programa foca na melhora dos indicadores identificados na sua avaliação inicial."}
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </>
-                ) : (
+                )}
+
+                {step === 'enrolled' && (
                     <div className="space-y-8 animate-in fade-in slide-in-from-top-4 duration-700">
-                        {/* Enrolled Status Header */}
+                        {/* Waiting Status Header */}
                         <div className="bg-slate-900 rounded-[40px] p-8 text-white relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-400 opacity-20 blur-3xl -mr-8 -mt-8" />
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-orange-400 opacity-20 blur-3xl -mr-8 -mt-8" />
                             <div className="flex items-center gap-4 mb-4">
                                 <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center border border-white/10">
-                                    <CheckCircle2 className="w-6 h-6 text-emerald-400" />
+                                    <Clock className="w-6 h-6 text-orange-400" />
                                 </div>
                                 <div>
                                     <h2 className="text-xl font-black">{programData.name}</h2>
-                                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Inscrição Ativa • LGPD Ok</p>
+                                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Interesse Confirmado</p>
                                 </div>
                             </div>
-                            <p className="text-xs text-slate-400 font-medium leading-relaxed">
-                                Use o calendário abaixo para marcar sua presença e o mural para interagir com o grupo e a equipe da <strong>{programData.professional}</strong>.
-                            </p>
+                            <div className="mt-4 p-4 bg-white/5 rounded-2xl border border-white/10">
+                                <p className="text-xs text-orange-400 font-black uppercase tracking-widest mb-1">Próxima Etapa</p>
+                                <p className="text-sm text-white font-bold">Aguardando análise do profissional</p>
+                                <p className="text-[10px] text-slate-400 mt-1 leading-relaxed">
+                                    O responsável técnico analisará seu Raio-X de Vitalidade e entrará em contato com o feedback.
+                                </p>
+                            </div>
                         </div>
 
-                        {/* Interactive Area */}
-                        <ActivityInteraction
-                            programId={id}
-                            programName={programData.name}
-                            participacaoId="demo-part-1"
-                            isPrivate={id === "bem-viver"}
-                            initialFeed={[
-                                {
-                                    id: "1",
-                                    createdAt: new Date().toISOString(),
-                                    conteudo: "Hoje a aula de dança me deixou muito animado!",
-                                    participacao: { associado: { nome: "Maria Silva" } },
-                                    reacoes: [],
-                                    comentarios: []
-                                }
-                            ]}
-                        />
+                        <button
+                            onClick={() => router.push('/dashboard/associado')}
+                            className="w-full bg-slate-100 text-slate-600 py-5 rounded-[24px] font-black text-sm uppercase tracking-widest hover:bg-slate-200 transition-all flex items-center justify-center gap-2"
+                        >
+                            Voltar para o Saúde 360
+                        </button>
                     </div>
                 )}
 
-                {showConsent && (
+                {step === 'consent' && (
                     <ConsentModal
                         onAccept={handleAcceptConsent}
-                        onClose={() => setShowConsent(false)}
+                        onClose={() => setStep('details')}
                     />
                 )}
             </div>
         </AppShell>
     );
 }
+
+// Ensure Activity is imported if used
+import { Activity } from "lucide-react";
+import { useRouter } from "next/navigation";
