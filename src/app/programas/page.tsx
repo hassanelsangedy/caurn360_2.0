@@ -128,7 +128,7 @@ export default function ProgramasPage() {
             project: "CaurnAtiva",
             icon: Activity,
             color: "blue",
-            target: "Adultos e Idosos",
+            target: "Exclusivo para Idosos 60+",
             isAvailable: true
         },
         {
@@ -137,7 +137,7 @@ export default function ProgramasPage() {
             proposal: "Aumentar nível de atividade física e reduzir sedentarismo.",
             project: "CaurnAtiva",
             icon: MessageSquare,
-            color: "indigo",
+            color: "blue",
             target: "Adultos e Idosos",
             isAvailable: true
         }
@@ -158,22 +158,15 @@ export default function ProgramasPage() {
                 <div className="grid gap-4">
                     {programs.map((prog) => {
                         const Icon = prog.icon;
-                        const colorMap: { [key: string]: string } = {
-                            emerald: "emerald",
-                            blue: "blue",
-                            orange: "orange",
-                            red: "red",
-                            purple: "purple",
-                            yellow: "yellow",
-                            pink: "pink",
-                            indigo: "indigo"
-                        };
-                        const colorClass = colorMap[prog.color] || "slate";
+                        const colorClass = prog.color === "emerald" ? "emerald" : "blue";
 
                         return (
                             <div key={prog.id} className="bg-white rounded-[32px] p-5 shadow-sm border border-slate-100 transition-all hover:shadow-md hover:border-blue-100 group">
                                 <div className="flex items-start justify-between mb-4">
-                                    <div className={`p-3 rounded-2xl bg-${colorClass}-50 text-${colorClass}-600 group-hover:scale-110 transition-transform`}>
+                                    <div className={colorClass === "emerald"
+                                        ? "p-3 rounded-2xl bg-emerald-50 text-emerald-600 group-hover:scale-110 transition-transform"
+                                        : "p-3 rounded-2xl bg-blue-50 text-blue-600 group-hover:scale-110 transition-transform"
+                                    }>
                                         <Icon className="w-6 h-6" />
                                     </div>
                                     <div className="text-right">
@@ -194,7 +187,10 @@ export default function ProgramasPage() {
 
                                     <Link
                                         href={`/programas/${prog.id}`}
-                                        className={`bg-${colorClass}-600 text-white px-5 py-2.5 rounded-xl text-xs font-black shadow-lg shadow-${colorClass}-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2`}
+                                        className={colorClass === "emerald"
+                                            ? "bg-emerald-600 text-white px-5 py-2.5 rounded-xl text-xs font-black shadow-lg shadow-emerald-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+                                            : "bg-blue-600 text-white px-5 py-2.5 rounded-xl text-xs font-black shadow-lg shadow-blue-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+                                        }
                                     >
                                         Saber Mais
                                         <ArrowRight className="w-4 h-4" />

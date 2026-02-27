@@ -130,7 +130,7 @@ export default function AvaliacaoDigitalPage() {
     );
 
     return (
-        <AppShell title="Triagem Digital" showBottomNav={false}>
+        <AppShell title="Triagem Digital" showBottomNav={true}>
             <div className="max-w-2xl mx-auto pt-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
                 {/* Header Info */}
                 <div className="flex items-center justify-between mb-6 px-1">
