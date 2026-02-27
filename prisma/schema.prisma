@@ -1,0 +1,146 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Associado {
+  id                String      @id @default(cuid())
+  nome              String
+  email             String?
+  cpf               String?     @unique
+  dataNascimento    DateTime?
+  genero            String?
+  nivelRisco        Int         @default(3) // 1: Alto, 2: Médio, 3: Baixo
+  ultimaInteracao   DateTime?   @default(now())
+  
+  interacoes        Interacao[]
+  participacoes     ParticipacaoPrograma[]
+  avaliacoes        Avaliacao[]
+  faltaConsecutivas Int         @default(0)
+  
+  // LGPD & Profiles
+  consentimentoGeral Boolean    @default(false)
+  avatar            String?
+  
+  custoMensal       Float       @default(0)
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model Programa {
+  id          String   @id @default(cuid())
+  nome        String   @unique
+  eixo        String   // Nutricional, Psicossocial, Reabilitação, Suporte
+  description String?
+  isPrivate   Boolean  @default(false) // If true, feed is between Aluno <-> Profissional only
+  
+  participantes ParticipacaoPrograma[]
+  postagens     Postagem[]
+}
+
+model ParticipacaoPrograma {
+  id          String    @id @default(cuid())
+  associado   Associado @relation(fields: [associadoId], references: [id])
+  associadoId String
+  programa    Programa  @relation(fields: [programaId], references: [id])
+  programaId  String
+  dataInicio  DateTime  @default(now())
+  status      String    @default("Ativo") // Ativo, Suspenso, Concluído
+  
+  // Activity Specific Consent (LGPD)
+  usoImagemConsentimento Boolean @default(false)
+  usoVozConsentimento    Boolean @default(false)
+  
+  frequencias Frequencia[]
+  postagens   Postagem[]
+}
+
+model Frequencia {
+  id              String               @id @default(cuid())
+  participacao    ParticipacaoPrograma @relation(fields: [participacaoId], references: [id])
+  participacaoId  String
+  data            DateTime             @default(now())
+  presente        Boolean              @default(true)
+  diario          String?              // "Como estou me sentindo"
+  sentimento      String?              // Emoji or keyword
+  fotoEvidencia   String?              // URL for the photo uploaded during check-in
+  
+  createdAt       DateTime             @default(now())
+}
+
+model Postagem {
+  id              String               @id @default(cuid())
+  programa        Programa             @relation(fields: [programaId], references: [id])
+  programaId      String
+  participacao    ParticipacaoPrograma @relation(fields: [participacaoId], references: [id])
+  participacaoId  String
+  
+  conteudo        String?
+  imagemUrl       String?
+  tipo            String               @default("Social") // Social, Evidencia, Orientacao
+  visibilidade    String               @default("Publico") // Publico (Group), Privado (Professional Only)
+  
+  comentarios     Comentario[]
+  reacoes         Reacao[]
+  
+  createdAt       DateTime             @default(now())
+}
+
+model Comentario {
+  id              String    @id @default(cuid())
+  postagem        Postagem  @relation(fields: [postagemId], references: [id])
+  postagemId      String
+  
+  autorId         String    // ID of the professional or associate
+  autorNome       String
+  autorTipo       String    // "Profissional" | "Associado"
+  texto           String
+  
+  createdAt       DateTime  @default(now())
+}
+
+model Reacao {
+  id              String    @id @default(cuid())
+  postagem        Postagem  @relation(fields: [postagemId], references: [id])
+  postagemId      String
+  
+  autorId         String
+  tipo            String    @default("Like")
+}
+
+model Interacao {
+  id          String    @id @default(cuid())
+  associado   Associado @relation(fields: [associadoId], references: [id])
+  associadoId String
+  data        DateTime  @default(now())
+  tipo        String    // WhatsApp, Telefone, Presencial, Sistema
+  descricao   String?
+  profissional String?
+}
+
+model Avaliacao {
+  id          String    @id @default(cuid())
+  associado   Associado @relation(fields: [associadoId], references: [id])
+  associadoId String
+  data        DateTime  @default(now())
+  tipo        String    // Física, Mental, Nutricional
+  score       Float?
+  detalhes    String?   // JSON stringified for flexible results
+  profissional String?
+}
+
+model IndicadorGlobal {
+  id          String    @id @default(cuid())
+  data        DateTime  @default(now())
+  nps         Float     @default(0)
+  sinistralidadeReducao Float @default(0)
+  atendimentosDigitais Int @default(0)
+}
+
