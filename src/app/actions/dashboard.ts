@@ -97,8 +97,6 @@ export async function getInactivityAlerts() {
 }
 export async function getProgramActivityMetrics() {
     try {
-        const programs = await prisma.programa.findMany();
-
         // In a real app, we'd aggregate participations and interactions
         // For now, we'll return enriched data for each program
         return [
