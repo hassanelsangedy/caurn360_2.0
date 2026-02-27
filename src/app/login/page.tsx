@@ -10,9 +10,9 @@ export default function LoginPage() {
 
                 <div className="flex flex-col items-center gap-8">
                     <div className="flex items-center gap-4">
-                        <img src="/images/caurn-logo.png" alt="CAURN Logo" className="h-12 w-auto object-contain" />
-                        <div className="w-px h-8 bg-slate-200" />
-                        <img src="/images/psicofisio-logo.png" alt="PsicoFisio Logo" className="h-12 w-auto object-contain" />
+                        <img src="/images/caurn-logo.png" alt="CAURN Logo" className="h-20 w-auto object-contain" />
+                        <div className="w-px h-12 bg-slate-200" />
+                        <img src="/images/psicofisio-logo.png" alt="PsicoFisio Logo" className="h-20 w-auto object-contain" />
                     </div>
                 </div>
 
