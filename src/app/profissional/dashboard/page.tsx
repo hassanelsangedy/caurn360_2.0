@@ -16,7 +16,8 @@ import {
     ChevronDown,
     HeartPulse,
     Brain,
-    Shield
+    Shield,
+    ClipboardList
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -241,47 +242,10 @@ export default function ProfissionalDashboardPage() {
 
                         <div className="flex-1 space-y-4 overflow-y-auto max-h-[500px] pr-2 custom-scrollbar">
                             {[
-                                { id: 'r1', name: 'João da Silva', programa: 'Pilates', forca: 'High', stamina: 'Med', pa: 145, status: 'Pendente' },
-                                { id: 'r2', name: 'Maria Santos', programa: 'Nutrição Ativa', forca: 'Low', stamina: 'High', pa: 165, status: 'Alerta' },
+                                { id: 'r1', name: 'João da Silva', programa: 'Pilates Clínico', forca: 'Alto', stamina: 'Médio', pa: 145, status: 'Pendente' },
+                                { id: 'r2', name: 'Maria Santos', programa: 'Cuidadores', forca: 'Baixo', stamina: 'Alto', pa: 170, status: 'Alerta' },
                             ].map((req) => (
-                                <div key={req.id} className="p-4 bg-slate-50 rounded-[24px] border border-slate-100 hover:border-blue-200 transition-all">
-                                    <div className="flex justify-between items-start mb-3">
-                                        <div>
-                                            <p className="text-sm font-black text-slate-800">{req.name}</p>
-                                            <p className="text-[11px] font-bold text-slate-500 uppercase tracking-tight">Interesse em: <span className="text-caurn-red">{req.programa}</span></p>
-                                        </div>
-                                        <div className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${req.pa > 160 ? 'bg-orange-100 text-orange-600' : 'bg-blue-100 text-blue-600'}`}>
-                                            {req.pa > 160 ? 'Alerta Clínico' : 'Análise Pendente'}
-                                        </div>
-                                    </div>
-
-                                    {/* Raio-X Indicators Mini View */}
-                                    <div className="grid grid-cols-3 gap-2 mb-4">
-                                        <div className="bg-white p-2 rounded-xl text-center border border-slate-100">
-                                            <p className="text-[8px] font-black text-slate-400 uppercase">Força</p>
-                                            <p className="text-[10px] font-black text-emerald-600">{req.forca}</p>
-                                        </div>
-                                        <div className="bg-white p-2 rounded-xl text-center border border-slate-100">
-                                            <p className="text-[8px] font-black text-slate-400 uppercase">Stamina</p>
-                                            <p className="text-[10px] font-black text-blue-600">{req.stamina}</p>
-                                        </div>
-                                        <div className="bg-white p-2 rounded-xl text-center border border-slate-100">
-                                            <p className="text-[8px] font-black text-slate-400 uppercase">PA Sist.</p>
-                                            <p className={`text-[10px] font-black ${req.pa > 160 ? 'text-caurn-red' : 'text-slate-600'}`}>{req.pa}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex gap-2">
-                                        <button className="flex-1 bg-white border border-slate-200 text-slate-600 py-2 rounded-lg text-xs font-black uppercase tracking-tight hover:bg-slate-50 transition-all">Recusar/Oriente</button>
-                                        <button className="flex-1 bg-slate-900 text-white py-2 rounded-lg text-xs font-black uppercase tracking-tight hover:bg-black transition-all">Aprovar Ingresso</button>
-                                    </div>
-
-                                    {req.pa > 160 && (
-                                        <p className="mt-3 text-[9px] text-orange-600 font-bold bg-orange-50 p-2 rounded-lg border border-orange-100 leading-tight">
-                                            Sua Pressão Sistólica Pós-Exercício (Pág. 27/73) indicou um pico. Recomenda-se orientação de feedback.
-                                        </p>
-                                    )}
-                                </div>
+                                <RequestCard key={req.id} req={req} />
                             ))}
                         </div>
 
@@ -290,6 +254,8 @@ export default function ProfissionalDashboardPage() {
                         </button>
                     </section>
                 </div>
+
+                {/* Feedback Modal / Overlay would go here in a full app, but we'll use inline state in RequestCard */}
 
                 {/* Dimension 3: Sustainability & ROI */}
                 <section className="bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm relative overflow-hidden flex flex-col justify-between mt-8">
@@ -383,9 +349,101 @@ export default function ProfissionalDashboardPage() {
     );
 }
 
-import { ClipboardList } from "lucide-react";
-import { decidirRequisicao } from "@/app/actions/programas";
-import { toast } from "sonner";
+const RequestCard = ({ req }: any) => {
+    const [showFeedback, setShowFeedback] = useState(false);
+    const [feedback, setFeedback] = useState("");
+    const [status, setStatus] = useState<"pending" | "approved" | "rejected">("pending");
+
+    const handleApprove = () => {
+        setStatus("approved");
+        alert(`Ingresso de ${req.name} aprovado!`);
+    };
+
+    const handleReject = () => {
+        if (!showFeedback) {
+            setShowFeedback(true);
+            return;
+        }
+        setStatus("rejected");
+        alert(`Ingresso de ${req.name} recusado com feedback.`);
+    };
+
+    if (status !== "pending") {
+        return (
+            <div className={`p-4 rounded-[24px] border ${status === 'approved' ? 'bg-emerald-50 border-emerald-100' : 'bg-slate-50 border-slate-200'} animate-in fade-in`}>
+                <div className="flex items-center gap-3">
+                    <CheckCircle2 className={`w-5 h-5 ${status === 'approved' ? 'text-emerald-600' : 'text-slate-400'}`} />
+                    <p className="text-sm font-bold text-slate-700">
+                        {req.name} - {status === 'approved' ? 'Inscrito com Sucesso' : 'Feedback Enviado'}
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="p-4 bg-slate-50 rounded-[24px] border border-slate-100 hover:border-blue-200 transition-all">
+            <div className="flex justify-between items-start mb-3">
+                <div>
+                    <p className="text-sm font-black text-slate-800">{req.name}</p>
+                    <p className="text-[11px] font-bold text-slate-500 uppercase tracking-tight">Interesse em: <span className="text-caurn-red font-black">{req.programa}</span></p>
+                </div>
+                <div className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${req.pa > 160 ? 'bg-orange-100 text-orange-600' : 'bg-blue-100 text-blue-600'}`}>
+                    {req.pa > 160 ? 'Alerta Clínico' : 'Análise Pendente'}
+                </div>
+            </div>
+
+            {/* Raio-X Indicators Mini View */}
+            <div className="grid grid-cols-3 gap-2 mb-4">
+                <div className="bg-white p-2 rounded-xl text-center border border-slate-100 shadow-sm">
+                    <p className="text-[8px] font-black text-slate-400 uppercase">Força</p>
+                    <p className="text-[10px] font-black text-emerald-600">{req.forca}</p>
+                </div>
+                <div className="bg-white p-2 rounded-xl text-center border border-slate-100 shadow-sm">
+                    <p className="text-[8px] font-black text-slate-400 uppercase">Stamina</p>
+                    <p className="text-[10px] font-black text-blue-600">{req.stamina}</p>
+                </div>
+                <div className="bg-white p-2 rounded-xl text-center border border-slate-100 shadow-sm">
+                    <p className="text-[8px] font-black text-slate-400 uppercase">PA Sist.</p>
+                    <p className={`text-[10px] font-black ${req.pa > 160 ? 'text-caurn-red' : 'text-slate-600'}`}>{req.pa}</p>
+                </div>
+            </div>
+
+            {showFeedback && (
+                <div className="mb-4 animate-in slide-in-from-top-2">
+                    <textarea
+                        value={feedback}
+                        onChange={(e) => setFeedback(e.target.value)}
+                        placeholder="Escreva o feedback clínico..."
+                        className="w-full p-3 rounded-xl border border-orange-200 text-xs font-medium focus:ring-2 focus:ring-orange-100 focus:border-orange-400 outline-none min-h-[80px]"
+                    />
+                    <p className="text-[9px] text-slate-400 mt-1 italic">Ex: Sugira ajuste de medicação antes do exercício.</p>
+                </div>
+            )}
+
+            <div className="flex gap-2">
+                <button
+                    onClick={handleReject}
+                    className="flex-1 bg-white border border-slate-200 text-slate-600 py-2 rounded-lg text-xs font-black uppercase tracking-tight hover:bg-slate-50 transition-all"
+                >
+                    {showFeedback ? "Confirmar Recusa" : "Recusar/Oriente"}
+                </button>
+                <button
+                    onClick={handleApprove}
+                    className="flex-1 bg-slate-900 text-white py-2 rounded-lg text-xs font-black uppercase tracking-tight hover:bg-black transition-all"
+                >
+                    Aprovar Ingresso
+                </button>
+            </div>
+
+            {req.pa > 160 && !showFeedback && (
+                <p className="mt-3 text-[9px] text-orange-600 font-bold bg-orange-50 p-2 rounded-lg border border-orange-100 leading-tight">
+                    Alerta Biológico: Pressão Sistólica indicou um pico no Raio-X. Recomenda-se orientação de feedback.
+                </p>
+            )}
+        </div>
+    );
+};
 
 // Sub-components
 const KPICard = ({ title, value, trend, isPositive, description, icon: Icon }: any) => (
