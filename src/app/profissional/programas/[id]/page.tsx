@@ -12,7 +12,13 @@ import {
     FileDown,
     ShieldAlert,
     TrendingUp,
-    ChevronLeft
+    ChevronLeft,
+    Plus,
+    Camera,
+    UserPlus,
+    Check,
+    X,
+    Filter
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -41,6 +47,20 @@ export default function ProfessionalActivityManagementPage() {
         attendanceRate: "94%",
         clinicalEvolution: "+18%"
     };
+
+    const [inscritos] = useState([
+        { id: 1, nome: "Ana Silva", status: "Ativa", comparecimento: "95%", ultimaAvaliacao: "15/02" },
+        { id: 2, nome: "João Oliveira", status: "Risco 1", comparecimento: "82%", ultimaAvaliacao: "10/02" },
+        { id: 3, nome: "Maria Santos", status: "Ativa", comparecimento: "100%", ultimaAvaliacao: "22/02" },
+    ]);
+
+    const [interessados] = useState([
+        { id: 4, nome: "Roberto Souza", data: "27/02", score: 72 },
+        { id: 5, nome: "Carla Nunes", data: "28/02", score: 65 },
+    ]);
+
+    const [showPostForm, setShowPostForm] = useState(false);
+    const [postContent, setPostContent] = useState("");
 
     return (
         <AppShell title="Gestão de Atividade" fullWidth>
@@ -79,7 +99,7 @@ export default function ProfessionalActivityManagementPage() {
                         { label: "Engajamento", value: stats.avgEngagement, icon: TrendingUp, color: "text-caurn-red", bg: "bg-red-50" },
                         { label: "Evolução Clin.", value: stats.clinicalEvolution, icon: BarChart3, color: "text-purple-600", bg: "bg-purple-50" },
                     ].map((stat, i) => (
-                        <div key={i} className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm">
+                        <div key={i} className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
                             <div className={`w-10 h-10 ${stat.bg} ${stat.color} rounded-2xl flex items-center justify-center mb-4`}>
                                 <stat.icon className="w-5 h-5" />
                             </div>
@@ -89,13 +109,117 @@ export default function ProfessionalActivityManagementPage() {
                     ))}
                 </div>
 
+                {/* Enrollment Management Row */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    {/* List 1: Enrolled */}
+                    <div className="bg-white rounded-[40px] p-8 border border-slate-100 shadow-sm space-y-6">
+                        <div className="flex items-center justify-between">
+                            <h3 className="font-black text-slate-800 uppercase text-xs tracking-widest flex items-center gap-2">
+                                <Users className="w-5 h-5 text-blue-600" />
+                                Associados Inscritos
+                            </h3>
+                            <span className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-[10px] font-black uppercase">Ativos: {inscritos.length}</span>
+                        </div>
+                        <div className="space-y-3">
+                            {inscritos.map(at => (
+                                <div key={at.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-blue-200 transition-colors">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-10 h-10 bg-white rounded-xl border border-slate-200 flex items-center justify-center font-black text-slate-400 text-sm">
+                                            {at.nome.charAt(0)}
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-black text-slate-800">{at.nome}</p>
+                                            <p className="text-[10px] text-slate-400 font-bold uppercase">Presença: {at.comparecimento} • Evolução: {at.ultimaAvaliacao}</p>
+                                        </div>
+                                    </div>
+                                    <span className={`px-2 py-1 rounded-lg text-[9px] font-black uppercase ${at.status === 'Ativa' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-caurn-red'}`}>
+                                        {at.status}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* List 2: Interested */}
+                    <div className="bg-white rounded-[40px] p-8 border border-slate-100 shadow-sm space-y-6">
+                        <div className="flex items-center justify-between">
+                            <h3 className="font-black text-slate-800 uppercase text-xs tracking-widest flex items-center gap-2">
+                                <UserPlus className="w-5 h-5 text-orange-600" />
+                                Candidatos Interessados
+                            </h3>
+                            <span className="bg-orange-50 text-orange-600 px-3 py-1 rounded-full text-[10px] font-black uppercase">Novos: {interessados.length}</span>
+                        </div>
+                        <div className="space-y-3">
+                            {interessados.map(at => (
+                                <div key={at.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-orange-200 transition-colors">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-10 h-10 bg-white rounded-xl border border-slate-200 flex items-center justify-center font-black text-slate-400 text-sm">
+                                            {at.nome.charAt(0)}
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-black text-slate-800">{at.nome}</p>
+                                            <p className="text-[10px] text-slate-400 font-bold uppercase">Interesse em {at.data} • Score: {at.score}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button className="w-8 h-8 bg-emerald-500 text-white rounded-lg flex items-center justify-center shadow-lg shadow-emerald-500/20 hover:scale-105 active:scale-95 transition-all">
+                                            <Check className="w-4 h-4" />
+                                        </button>
+                                        <button className="w-8 h-8 bg-white border border-slate-200 text-slate-400 rounded-lg flex items-center justify-center hover:bg-slate-50 active:scale-95 transition-all">
+                                            <X className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Moderation Feed */}
                     <div className="lg:col-span-2 space-y-6">
-                        <h3 className="text-sm font-black text-caurn-dark uppercase tracking-widest flex items-center gap-2">
-                            <MessageSquare className="w-5 h-5" />
-                            Moderação do Mural
-                        </h3>
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-sm font-black text-caurn-dark uppercase tracking-widest flex items-center gap-2">
+                                <MessageSquare className="w-5 h-5" />
+                                Moderação do Mural
+                            </h3>
+                            <button
+                                onClick={() => setShowPostForm(!showPostForm)}
+                                className="bg-slate-900 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase flex items-center gap-2 hover:bg-black transition-all"
+                            >
+                                <Plus className="w-4 h-4" />
+                                Postar no Mural
+                            </button>
+                        </div>
+
+                        {showPostForm && (
+                            <div className="bg-white border-2 border-caurn-red rounded-[32px] p-6 shadow-xl animate-in zoom-in-95 duration-300">
+                                <textarea
+                                    value={postContent}
+                                    onChange={(e) => setPostContent(e.target.value)}
+                                    placeholder="Escreva um comunicado ou descreva o treino de hoje..."
+                                    className="w-full h-32 bg-slate-50 rounded-2xl p-4 text-sm font-medium outline-none resize-none"
+                                />
+                                <div className="flex items-center justify-between mt-4">
+                                    <button className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors">
+                                        <Camera className="w-5 h-5" />
+                                        <span className="text-[10px] font-black uppercase">Anexar Foto</span>
+                                    </button>
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => setShowPostForm(false)}
+                                            className="px-4 py-2 text-[10px] font-black uppercase text-slate-400"
+                                        >
+                                            Cancelar
+                                        </button>
+                                        <button className="bg-caurn-red text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase shadow-lg shadow-red-500/20">
+                                            Publicar Agora
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
 
                         {loading ? (
                             <div className="animate-pulse space-y-4">
