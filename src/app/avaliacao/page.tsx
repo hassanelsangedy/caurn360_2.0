@@ -22,7 +22,11 @@ import {
     Droplet,
     Zap,
     Users,
-    ArrowRight
+    ArrowRight,
+    MonitorPlay,
+    Calendar as CalendarIcon,
+    Clock,
+    UserCircle2
 } from "lucide-react";
 import Link from "next/link";
 
@@ -204,6 +208,67 @@ export default function AvaliacaoResumoPage() {
                         </Link>
                     </div>
                 )}
+
+                {/* Section: My Programs (New) */}
+                <div className="space-y-6">
+                    <div className="flex items-center justify-between px-2">
+                        <div className="flex items-center gap-2 text-caurn-dark">
+                            <MonitorPlay className="w-6 h-6 text-caurn-red" />
+                            <h3 className="font-black uppercase text-xs tracking-widest">Meus Programas & Atividades</h3>
+                        </div>
+                        <Link href="/programas" className="text-[10px] font-black text-caurn-red uppercase hover:underline">Ver Todos</Link>
+                    </div>
+
+                    <div className="grid gap-4">
+                        {/* Program: Enrolled */}
+                        <div className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm relative overflow-hidden group hover:border-emerald-200 transition-all">
+                            <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full -mr-12 -mt-12 transition-transform group-hover:scale-110" />
+
+                            <div className="flex justify-between items-start mb-4">
+                                <div>
+                                    <span className="bg-emerald-100 text-emerald-700 text-[9px] font-black uppercase px-2 py-0.5 rounded-full">Inscrito • Fase Ativa</span>
+                                    <h4 className="text-lg font-black text-slate-800 mt-1">Pilates Clínico</h4>
+                                </div>
+                                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+                                    <MonitorPlay className="w-5 h-5" />
+                                </div>
+                            </div>
+
+                            <p className="text-xs text-slate-500 font-medium mb-6">Foco em reabilitação postural e fortalecimento de core.</p>
+
+                            <div className="flex gap-2">
+                                <Link href="/programas/pilates?status=enrolled" className="flex-1 bg-slate-900 text-white text-center py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all">
+                                    Acessar Mural
+                                </Link>
+                                <Link href="/programas/pilates?status=enrolled" className="flex-1 bg-white border border-slate-200 text-slate-600 text-center py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all">
+                                    Calendário
+                                </Link>
+                            </div>
+                        </div>
+
+                        {/* Program: Awaiting Approval */}
+                        <div className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm relative overflow-hidden group hover:border-orange-200 transition-all">
+                            <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/5 rounded-full -mr-12 -mt-12 transition-transform group-hover:scale-110" />
+
+                            <div className="flex justify-between items-start mb-4">
+                                <div>
+                                    <span className="bg-orange-100 text-orange-700 text-[9px] font-black uppercase px-2 py-0.5 rounded-full">Interesse Enviado</span>
+                                    <h4 className="text-lg font-black text-slate-800 mt-1">Programa de Cuidadores</h4>
+                                </div>
+                                <div className="p-2 bg-orange-50 text-orange-600 rounded-xl">
+                                    <Clock className="w-5 h-5" />
+                                </div>
+                            </div>
+
+                            <div className="bg-orange-50 border border-orange-100 p-3 rounded-2xl flex items-center gap-3">
+                                <UserCircle2 className="w-5 h-5 text-orange-400" />
+                                <p className="text-[10px] text-orange-800 font-bold leading-tight">
+                                    Sua solicitação está sendo analisada pelo mestre da APS especializado.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 {/* Section: Physical Results (Only show if completed) */}
                 {userData.hasCompletedEvaluation && (

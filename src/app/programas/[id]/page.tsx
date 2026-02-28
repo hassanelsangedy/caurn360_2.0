@@ -18,8 +18,8 @@ import {
     MonitorPlay
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
-import { useParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useParams, useSearchParams, useRouter } from "next/navigation";
 
 interface ProgramData {
     id: string;
@@ -188,6 +188,16 @@ export default function ProgramaDetailPage() {
     const [showMuralDemo, setShowMuralDemo] = useState(false);
 
     const router = useRouter();
+    const searchParams = useSearchParams();
+
+    // Handle enrollment status from query params
+    useEffect(() => {
+        const urlStatus = searchParams.get('status');
+        if (urlStatus === 'enrolled') {
+            setStep('enrolled');
+            setShowMuralDemo(true);
+        }
+    }, [searchParams]);
 
     // Mock for demo purposes: if program is pilates, show special flow
     const isPilates = id === 'pilates';
@@ -212,9 +222,9 @@ export default function ProgramaDetailPage() {
         <AppShell title={programData.name}>
             <div className="max-w-md mx-auto space-y-6 pb-24 px-4 pt-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
 
-                <Link href="/programas" className="flex items-center gap-1 text-slate-400 font-bold text-xs hover:text-slate-600 transition-colors">
+                <Link href="/avaliacao" className="flex items-center gap-1 text-slate-400 font-bold text-xs hover:text-slate-600 transition-colors">
                     <ChevronLeft className="w-4 h-4" />
-                    Voltar para Programas
+                    Voltar para Saúde 360
                 </Link>
 
                 {step !== 'enrolled' && (
@@ -393,7 +403,7 @@ export default function ProgramaDetailPage() {
                         )}
 
                         <button
-                            onClick={() => router.push('/dashboard/associado')}
+                            onClick={() => router.push('/avaliacao')}
                             className="w-full border-2 border-slate-200 text-slate-400 py-5 rounded-[24px] font-black text-sm uppercase tracking-widest hover:border-slate-300 hover:text-slate-600 transition-all flex items-center justify-center gap-2"
                         >
                             Voltar para o Saúde 360
@@ -414,4 +424,3 @@ export default function ProgramaDetailPage() {
 
 // Ensure Activity is imported if used
 import { Activity } from "lucide-react";
-import { useRouter } from "next/navigation";
