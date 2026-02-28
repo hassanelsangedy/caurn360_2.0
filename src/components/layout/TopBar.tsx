@@ -20,10 +20,10 @@ export function TopBar({ title = "Saúde 360", showBackButton, onBack }: TopBarP
 
             <div className="flex items-center gap-6 justify-center">
                 <Link href="/dashboard/associado">
-                    <img src="/images/caurn-logo.png" alt="CAURN Logo" className="h-20 w-auto object-contain" />
+                    <img src="/images/caurn-logo.png" alt="CAURN Logo" className="h-32 w-auto object-contain" />
                 </Link>
                 <div className="w-px h-12 bg-slate-200" />
-                <img src="/images/psicofisio-logo.png" alt="PsicoFisio Logo" className="h-20 w-auto object-contain" />
+                <img src="/images/psicofisio-logo.png" alt="PsicoFisio Logo" className="h-32 w-auto object-contain" />
             </div>
 
             <div className="flex-1 flex items-center justify-end gap-3">
