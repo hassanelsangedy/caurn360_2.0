@@ -9,7 +9,7 @@ interface TopBarProps {
 
 export function TopBar({ title = "Saúde 360", showBackButton, onBack }: TopBarProps) {
     return (
-        <header className="fixed top-0 inset-x-0 h-24 bg-white border-b border-slate-100 z-50 flex items-center justify-between px-4 lg:px-8 shadow-sm">
+        <header className="fixed top-0 inset-x-0 h-32 bg-white border-b-2 border-caurn-red z-50 flex items-center justify-between px-4 lg:px-8 shadow-xl">
             <div className="flex-1 flex items-center">
                 {showBackButton && (
                     <button onClick={onBack} className="p-2 -ml-2 text-caurn-dark hover:bg-slate-50 rounded-full transition-colors">
@@ -18,12 +18,12 @@ export function TopBar({ title = "Saúde 360", showBackButton, onBack }: TopBarP
                 )}
             </div>
 
-            <div className="flex items-center gap-6 justify-center">
+            <div className="flex items-center gap-10 justify-center">
                 <Link href="/dashboard/associado">
-                    <img src="/images/caurn-logo.png" alt="CAURN Logo" className="h-32 w-auto object-contain" />
+                    <img src="/images/caurn-logo.png" alt="CAURN Logo" className="h-28 w-auto object-contain" />
                 </Link>
-                <div className="w-px h-12 bg-slate-200" />
-                <img src="/images/psicofisio-logo.png" alt="PsicoFisio Logo" className="h-32 w-auto object-contain" />
+                <div className="w-px h-16 bg-slate-200" />
+                <img src="/images/psicofisio-logo.png" alt="PsicoFisio Logo" className="h-28 w-auto object-contain" />
             </div>
 
             <div className="flex-1 flex items-center justify-end gap-3">
