@@ -29,6 +29,18 @@ import {
     UserCircle2
 } from "lucide-react";
 import Link from "next/link";
+import {
+    LineChart,
+    Line,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ResponsiveContainer,
+    AreaChart,
+    Area,
+    Dot
+} from "recharts";
 
 interface ResultCardProps {
     title: string;
@@ -79,6 +91,14 @@ export default function AvaliacaoResumoPage() {
     });
     const [interestStep, setInterestStep] = useState<'IDLE' | 'FORM' | 'SUCCESS'>('IDLE');
     const [whatsapp, setWhatsapp] = useState("");
+
+    // Mock Historical Data for the Chart
+    const evolutionData = [
+        { period: '2023.1', forca: 15, vitalidade: 62, stamina: 40 },
+        { period: '2023.2', forca: 18, vitalidade: 68, stamina: 55 },
+        { period: '2024.1', forca: 21, vitalidade: 75, stamina: 70 },
+        { period: '2024.2', forca: 24, vitalidade: 82, stamina: 85 },
+    ];
 
     // 1. Digital Triage Results (Self-reported)
     const triageResults = [
@@ -208,6 +228,82 @@ export default function AvaliacaoResumoPage() {
                         </Link>
                     </div>
                 )}
+
+                {/* Section: Historical Evolution Chart (New) */}
+                <div className="bg-white p-6 rounded-[40px] shadow-sm border border-slate-100 space-y-6">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h3 className="font-black text-slate-800 flex items-center gap-2 uppercase text-xs tracking-widest">
+                                <TrendingUp className="w-5 h-5 text-caurn-red" />
+                                Evolução da Vitalidade
+                            </h3>
+                            <p className="text-[10px] text-slate-400 font-bold uppercase mt-1">Comparativo Semestral 2023-2024</p>
+                        </div>
+                    </div>
+
+                    <div className="h-[220px] w-full mt-4">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <AreaChart data={evolutionData}>
+                                <defs>
+                                    <linearGradient id="colorVit" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#E30613" stopOpacity={0.1} />
+                                        <stop offset="95%" stopColor="#E30613" stopOpacity={0} />
+                                    </linearGradient>
+                                </defs>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                                <XAxis
+                                    dataKey="period"
+                                    fontSize={10}
+                                    fontWeight="black"
+                                    axisLine={false}
+                                    tickLine={false}
+                                    tick={{ fill: '#94a3b8' }}
+                                />
+                                <YAxis hide domain={[0, 100]} />
+                                <Tooltip
+                                    contentStyle={{ borderRadius: '20px', border: 'none', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)', padding: '12px' }}
+                                    labelStyle={{ fontWeight: 'black', fontSize: '10px', textTransform: 'uppercase', marginBottom: '4px', color: '#1e293b' }}
+                                    itemStyle={{ fontWeight: 'bold', fontSize: '12px', padding: '0' }}
+                                />
+                                <Area
+                                    type="monotone"
+                                    dataKey="vitalidade"
+                                    stroke="#E30613"
+                                    name="Score Vitalidade"
+                                    strokeWidth={4}
+                                    fillOpacity={1}
+                                    fill="url(#colorVit)"
+                                    animationDuration={2000}
+                                />
+                                <Area
+                                    type="monotone"
+                                    dataKey="stamina"
+                                    stroke="#005691"
+                                    name="Estamina"
+                                    strokeWidth={2}
+                                    strokeDasharray="5 5"
+                                    fill="transparent"
+                                    animationDuration={2500}
+                                />
+                            </AreaChart>
+                        </ResponsiveContainer>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                            <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Melhora em Força</p>
+                            <p className="text-lg font-black text-slate-800">+60%</p>
+                            <div className="w-full bg-slate-200 h-1 rounded-full mt-2">
+                                <div className="bg-emerald-500 h-full w-[60%] rounded-full" />
+                            </div>
+                        </div>
+                        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                            <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Score Atual</p>
+                            <p className="text-lg font-black text-caurn-red">82/100</p>
+                            <p className="text-[8px] text-emerald-600 font-bold uppercase mt-1">Nível Excelente</p>
+                        </div>
+                    </div>
+                </div>
 
                 {/* Section: My Programs (New) */}
                 <div className="space-y-6">
@@ -359,6 +455,6 @@ export default function AvaliacaoResumoPage() {
                     </button>
                 </div>
             </div>
-        </AppShell>
+        </AppShell >
     );
 }
